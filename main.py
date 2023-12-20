@@ -10,7 +10,7 @@ FPS = 60
 
 window = pygame.display.set_mode((window_width, window_height))
 clock = pygame.time.Clock()
-im = pygame.image.load(os.path.join("pictures", "im1.png"))
+im = pygame.image.load(os.path.join("pictures", "bg", "bg3.png"))
 
 level = Level(0, window)    
 window.blit(im,[0,0])
@@ -22,7 +22,6 @@ while True:
             pygame.quit()
             sys.exit()
 
-    
     level.run()
     
     pygame.display.update()

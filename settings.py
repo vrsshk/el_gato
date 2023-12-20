@@ -24,7 +24,7 @@ def surrounding(level_number):
 
 def layer_images(file_name):
 
-    path = join ("pictures", file_name)
+    path = join ("pictures", "surrounding", file_name)
     big_image = pygame.image.load(path).convert_alpha()
     x_number = int(big_image.get_size()[0] / block_size)
     y_number = int(big_image.get_size()[1] / block_size)
@@ -34,7 +34,7 @@ def layer_images(file_name):
         for col in range(x_number):
             x = col*block_size
             y = row*block_size
-            surface = pygame.Surface((block_size, block_size))
+            surface = pygame.Surface((block_size, block_size), pygame.SRCALPHA)
             surface.blit(big_image, (0, 0), pygame.Rect(x,y, block_size, block_size))
             images.append(surface)
 

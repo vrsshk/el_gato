@@ -1,5 +1,5 @@
 import pygame
-from blocks import Block, block_size
+from blocks import Block, StaticBlock, block_size
 from player import Player
 from stuff import level_map, window_height, window_width
 from settings import surrounding, layer_images
@@ -20,6 +20,7 @@ class Level:
         self.player.add(Player(100, 100))
 
         self.blocks = self.create_layer('blocks')
+        self.grass = self.create_layer('grass')
 
     def create_layer(self, type):
         layer = self.surrounding[type]
@@ -32,8 +33,13 @@ class Level:
                     if type == 'blocks':
                         images = layer_images('blocks.png')
                         image = images[int(symbol)]
-                        sprite = Block(x, y, block_size, image)
+                        sprite = StaticBlock(x, y, block_size, image)
                         sprite_group.add(sprite)
+                    if type == 'grass':
+                        images = layer_images('grass.png')
+                        image = images[int(symbol)]
+                        sprite = StaticBlock(x, y, block_size, image)
+                        sprite_group.add(sprite)                     
         return sprite_group      
 
     def scroll_x(self):
@@ -80,10 +86,11 @@ class Level:
             player.landed = False
 
     def run(self):
+        self.scroll_x()
+
         #for blocks
         self.blocks.update(self.scroll_vel)
         self.blocks.draw(self.display_surface)
-        self.scroll_x()
 
         #for hero
         self.player.update()
@@ -91,6 +98,9 @@ class Level:
         self.vertical_collision_movement()
         self.player.draw(self.display_surface)
 
+        #for grass
+        self.grass.update(self.scroll_vel)
+        self.grass.draw(self.display_surface)
     
 
 

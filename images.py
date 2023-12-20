@@ -75,12 +75,3 @@ def load_sprite_sheets(dir, width, height, direction = False):
         else:
             all_sprites[file.replace(".png", "")] = sprites
     return all_sprites
-
-
-def get_block(size):
-    path = join("pictures", "blocks.png")
-    image = pygame.image.load(path).convert_alpha()
-    surface = pygame.Surface((size, size), pygame.SRCALPHA, 32)
-    rect = pygame.Rect(0, 0, size, size)
-    surface.blit(image, (0, 0), rect)
-    return surface
