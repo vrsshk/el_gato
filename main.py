@@ -1,7 +1,6 @@
 import pygame, sys
 import os
 from level import Level
-from map import csv_to_list
 
 pygame.init() 
 window_width= 960
@@ -13,8 +12,7 @@ window = pygame.display.set_mode((window_width, window_height))
 clock = pygame.time.Clock()
 im = pygame.image.load(os.path.join("pictures", "im1.png"))
 
-level_map = csv_to_list('0')
-level = Level(level_map, window)    
+level = Level(0, window)    
 window.blit(im,[0,0])
 
 while True:

@@ -2,35 +2,37 @@ import pygame
 from blocks import Block, block_size
 from player import Player
 from stuff import level_map, window_height, window_width
-from map import csv_to_list
+from settings import surrounding, layer_images
 
 
 
 class Level:
-    def __init__(self, level_map, surface):
-        self.map_dict = level_map
+    def __init__(self, level_number, surface):
+        self.surrounding = surrounding(str(level_number))
+
         self.scroll_vel = 0
         self.display_surface = surface
         self.setup_level()
         self.offset = 0
 
     def setup_level(self):
-
-        
         self.player = pygame.sprite.GroupSingle()
-        self.player.add(Player(200, 200))
-        table = self.map_dict['blocks']
-        self.blocks = self.create_blocks(table,'blocks')
+        self.player.add(Player(100, 100))
 
-    def create_blocks(self, table, type):
+        self.blocks = self.create_layer('blocks')
+
+    def create_layer(self, type):
+        layer = self.surrounding[type]
         sprite_group = pygame.sprite.Group()
-        for i, row in enumerate(table):
+        for i, row in enumerate(layer):
             for j, symbol in enumerate(row):
                 x = j * block_size
                 y = i * block_size
                 if symbol != "-1":
                     if type == 'blocks':
-                        sprite = Block(x, y, block_size)
+                        images = layer_images('blocks.png')
+                        image = images[int(symbol)]
+                        sprite = Block(x, y, block_size, image)
                         sprite_group.add(sprite)
         return sprite_group      
 

@@ -14,7 +14,7 @@ class Player(pygame.sprite.Sprite):
 
         self.animations = load_sprite_sheets("hero", 39, 48, True)
         self.animation_index = 0
-        self.animation_speed = 0.15
+        self.animation_speed = 0.2
 
         #status
         self.status = "idle"
@@ -22,7 +22,7 @@ class Player(pygame.sprite.Sprite):
 
         #movement
         self.x_vel = 5
-        self.y_vel = -15
+        self.y_vel = -14
         self.gravity = 0.5
 
 
