@@ -16,6 +16,15 @@ def flip (images):
         flipped_sprites.append(pygame.transform.flip(image, True, False))
     return flipped_sprites
 
+def sprite_separator(sprite_sheet, width, height):
+    sprites = [] #list of the sprites
+    for i in range(sprite_sheet.get_width() // width):
+        surface = pygame.Surface((width, height), pygame.SRCALPHA)
+        rect = pygame.Rect(i * width, 0, width, height)#going by window_width
+        surface.blit(sprite_sheet, (0, 0), rect)#drawing a rectangle surf
+        sprites.append(surface)
+    return sprites
+
 def load_sprite_sheets(dir, width, height, direction = False):
     """Summary line.
 
@@ -60,13 +69,7 @@ def load_sprite_sheets(dir, width, height, direction = False):
     for file in files:
         #loading big image(with all the sprites)
         sprite_sheet = pygame.image.load(join(path, file)).convert_alpha()
-
-        sprites = [] #list of the sprites
-        for i in range(sprite_sheet.get_width() // width):
-            surface = pygame.Surface((width, height), pygame.SRCALPHA)
-            rect = pygame.Rect(i * width, 0, width, height)#going by window_width
-            surface.blit(sprite_sheet, (0, 0), rect)#drawing a rectangle surf
-            sprites.append(surface)
+        sprites = sprite_separator(sprite_sheet, width, height)
 
         if direction:
             #str "run.png" turning into "run_right" or "run_left"
@@ -75,3 +78,4 @@ def load_sprite_sheets(dir, width, height, direction = False):
         else:
             all_sprites[file.replace(".png", "")] = sprites
     return all_sprites
+
