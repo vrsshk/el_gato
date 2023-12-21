@@ -18,7 +18,10 @@ class Level:
 
     def setup_level(self):
         self.player = pygame.sprite.GroupSingle()
-        self.player.add(Player(100, 100))
+        self.player.add(Player(32, 320))
+
+        self.goal = pygame.sprite.GroupSingle()
+        self.goal.add(Block(78*block_size, 13*block_size, block_size))
 
         self.blocks = self.create_layer('blocks')
         self.grass = self.create_layer('grass')
@@ -52,7 +55,7 @@ class Level:
                     if type == 'bats':
                         x_1 = x - 16
                         y_1 = y - 16
-                        sprite = Bat(x_1, y_1, 48, 'bat_idle.png')
+                        sprite = Bat(x_1, y_1)
                         sprite_group.add(sprite)
                     if type == 'barrier':
                         x_1 = x
@@ -119,9 +122,11 @@ class Level:
 
         #for hero
         self.player.update()
+        self.goal.update(self.scroll_vel)
         self.horizontal_collision_movement()
         self.vertical_collision_movement()
         self.player.draw(self.display_surface)
+
 
         #for coins
         self.coins.update(self.scroll_vel)
