@@ -1,8 +1,9 @@
 import pygame
-from blocks import Block, StaticBlock, block_size
+from blocks import Block, AnimatedBlock, StaticBlock, block_size
 from player import Player
 from stuff import level_map, window_height, window_width
 from settings import surrounding, layer_images
+from bats import Bat
 
 
 
@@ -21,6 +22,9 @@ class Level:
 
         self.blocks = self.create_layer('blocks')
         self.grass = self.create_layer('grass')
+        self.coins = self.create_layer('coins')
+        self.bats = self.create_layer('bats')
+        self.barrier = self.create_layer('barrier')
 
     def create_layer(self, type):
         layer = self.surrounding[type]
@@ -39,8 +43,29 @@ class Level:
                         images = layer_images('grass.png')
                         image = images[int(symbol)]
                         sprite = StaticBlock(x, y, block_size, image)
-                        sprite_group.add(sprite)                     
-        return sprite_group      
+                        sprite_group.add(sprite)
+                    if type == 'coins':
+                        x_1 = x + 8
+                        y_1 = y + 8
+                        sprite = AnimatedBlock(x_1, y_1, 16, 'coins.png')
+                        sprite_group.add(sprite)
+                    if type == 'bats':
+                        x_1 = x - 16
+                        y_1 = y - 16
+                        sprite = Bat(x_1, y_1, 48, 'bat_idle.png')
+                        sprite_group.add(sprite)
+                    if type == 'barrier':
+                        x_1 = x
+                        y_1 = y
+                        sprite = Block(x_1, y_1, block_size)
+                        sprite_group.add(sprite)
+         
+        return sprite_group
+    
+    def bats_reverse(self):
+        for bat in self.bats.sprites():
+            if pygame.sprite.spritecollide(bat, self.barrier, False):
+                bat.reverse()
 
     def scroll_x(self):
         player = self.player.sprite
@@ -97,6 +122,16 @@ class Level:
         self.horizontal_collision_movement()
         self.vertical_collision_movement()
         self.player.draw(self.display_surface)
+
+        #for coins
+        self.coins.update(self.scroll_vel)
+        self.coins.draw(self.display_surface)
+
+        #for bats
+        self.barrier.update(self.scroll_vel)
+        self.bats_reverse()
+        self.bats.update(self.scroll_vel)
+        self.bats.draw(self.display_surface)
 
         #for grass
         self.grass.update(self.scroll_vel)

@@ -16,6 +16,7 @@ def flip (images):
         flipped_sprites.append(pygame.transform.flip(image, True, False))
     return flipped_sprites
 
+
 def sprite_separator(sprite_sheet, width, height):
     sprites = [] #list of the sprites
     for i in range(sprite_sheet.get_width() // width):
@@ -24,6 +25,7 @@ def sprite_separator(sprite_sheet, width, height):
         surface.blit(sprite_sheet, (0, 0), rect)#drawing a rectangle surf
         sprites.append(surface)
     return sprites
+
 
 def load_sprite_sheets(dir, width, height, direction = False):
     """Summary line.
