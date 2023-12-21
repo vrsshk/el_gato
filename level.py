@@ -1,9 +1,11 @@
 import pygame
 from blocks import Block, AnimatedBlock, StaticBlock, block_size
 from player import Player
-from stuff import level_map, window_height, window_width
 from settings import surrounding, layer_images
 from bats import Bat
+
+window_width= 960
+window_height = 704
 
 
 
