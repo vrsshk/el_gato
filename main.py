@@ -40,6 +40,6 @@ while True:
             sys.exit()
 
     game.run()
-    
+
     pygame.display.update()
     clock.tick(fps)
