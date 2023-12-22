@@ -2,7 +2,7 @@ import pygame
 from images import load_sprite_sheets
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, x, y):
+    def __init__(self, x, y, change_hb):
         super().__init__()
         
         self.image = pygame.Surface((39, 48), pygame.SRCALPHA)
@@ -10,8 +10,13 @@ class Player(pygame.sprite.Sprite):
         self.direction = pygame.math.Vector2(0, 0)
         self.direction_name = "right"
 
+        #health
+        self.change_hb = change_hb
+        self.invincible = False
+        self.invincibility_delay = 2000
+        self.hurt_time = 0
+ 
         #animation
-
         self.animations = load_sprite_sheets("hero", 39, 48, True)
         self.animation_index = 0
         self.animation_speed = 0.2
@@ -25,16 +30,14 @@ class Player(pygame.sprite.Sprite):
         self.y_vel = -14
         self.gravity = 0.5
 
-
-        self.mask = None
         self.fall_count = 0
         self.animation_count = 0
-        self.hit = False
-        self.hit_count = 0
         self.jump_count = 0
     
     def get_status(self):
-        if self.direction.y < 0:
+        if self.invincible:
+            self.status = 'damage'
+        elif self.direction.y < 0:
             self.status = "jump"
         elif self.direction.y > 0:
             self.status = "fall"
@@ -43,6 +46,7 @@ class Player(pygame.sprite.Sprite):
                 self.status = "idle"
             else:
                 self.status = "run"
+
 
     def animate(self): 
         if self.direction.x > 0: 
@@ -77,7 +81,20 @@ class Player(pygame.sprite.Sprite):
     def jump(self):
         self.direction.y = self.y_vel
 
+    def get_damage(self, damage):
+        if not self.invincible:
+            self.change_hb(damage)
+            self.invincible = True
+            self.hurt_time = pygame.time.get_ticks()
+
+    def invincibility_timer(self):
+        if self.invincible:
+            current_time = pygame.time.get_ticks() 
+            if current_time - self.hurt_time >= self.invincibility_delay:
+                self.invincible = False
+
     def update(self):
         self.handle_move()
         self.get_status()
         self.animate()
+        self.invincibility_timer()

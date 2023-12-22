@@ -1,19 +1,51 @@
 import pygame, sys
 import os
 from level import Level
-
+from overworld import Overworld
+from ui import UI
+from data import window_height, window_width, fps
 pygame.init() 
-window_width= 960
-window_height = 704
-FPS = 60
 
+class Game:
+    def __init__(self):
+        #game atributes
+        self.ui = UI(window)
+        self.ful_health = 90
+        self.current_health = 90
+        self.coins = 0
+
+        #create overworld
+        self.overworld = Overworld(0, 2, window, self.create_level)
+        self.status = 'overworld'
+    
+    def create_level(self, current_level):
+        self.level = Level(current_level, window, self.create_overworld, self.change_coins, self.change_hb)
+        self.status = 'level'
+
+    def create_overworld(self):
+        self.status = 'overworld'
+
+    def change_hb(self, damage):
+        self.current_health -= damage
+        
+    def change_coins(self):
+        self.coins += 1
+
+    def run(self):
+        if self.status == 'overworld':
+            self.overworld.run()
+        elif self.status == 'level':
+            self.level.run()
+            self.ui.show_health(self.current_health, self.ful_health)
+            self.ui.show_coins(self.coins)
 
 window = pygame.display.set_mode((window_width, window_height))
 clock = pygame.time.Clock()
-im = pygame.image.load(os.path.join("pictures", "bg", "bg.png"))
-
-level = Level(0, window)    
+im = pygame.image.load(os.path.join("assets", "bg", "bg.png"))
+  
 window.blit(im,[0,0])
+
+game = Game()
 
 while True:
     window.blit(im,[0,0])
@@ -22,7 +54,7 @@ while True:
             pygame.quit()
             sys.exit()
 
-    level.run()
+    game.run()
     
     pygame.display.update()
-    clock.tick(FPS)
+    clock.tick(fps)
