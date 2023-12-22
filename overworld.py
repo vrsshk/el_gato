@@ -27,9 +27,10 @@ class Overworld:
         self.current_level = start_level
         self.create_level = create_level
 
-        #
-        self.press_index = 0
-        self.press_speed = 0.13
+        #timer
+        self.pressed = False
+        self.pressed_delay = 150
+        self.press_time = 0
 
         #sprites
         self.setup_nodes()
@@ -48,18 +49,26 @@ class Overworld:
         self.icon.add(icon_sprite)
 
     def handle_input(self):
-        self.press_index += self.press_speed
-        if self.press_index > 1:
-            self.press_index = 0
-
         keys = pygame.key.get_pressed()
-        if self.press_index == 0:
+        if not self.pressed:
             if keys[pygame.K_RIGHT] and self.current_level < 2:
                 self.current_level += 1
+                self.pressed = True
+                self.press_time = pygame.time.get_ticks() 
             elif keys[pygame.K_LEFT] and self.current_level > 0:
                 self.current_level -= 1
+                self.pressed = True
+                self.press_time = pygame.time.get_ticks() 
             elif keys[pygame.K_SPACE] or keys[pygame.K_KP_ENTER]:
                 self.create_level(self.current_level)
+                self.pressed = True
+                self.press_time = pygame.time.get_ticks() 
+    
+    def press_timer(self):
+        if self.pressed:
+            current_time = pygame.time.get_ticks() 
+            if current_time - self.press_time >= self.pressed_delay:
+                self.pressed = False
 
     def update_icon_position(self):
         self.icon.sprite.rect.center = self.nodes.sprites()[self.current_level].rect.center
@@ -71,6 +80,7 @@ class Overworld:
         
         self.icon.draw(self.display_surface)
         self.nodes.draw(self.display_surface)
+        self.press_timer()
 
 
 

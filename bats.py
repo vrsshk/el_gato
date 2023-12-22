@@ -17,6 +17,7 @@ class Bat(pygame.sprite.Sprite):
         self.animation_count = 0
 
         #status
+        self.dead = False
         self.status = "idle"
 
         #movement
@@ -34,9 +35,11 @@ class Bat(pygame.sprite.Sprite):
 
         self.animation_index += 0.15
         if self.animation_index > len(animation):
+            if self.status == 'angry':
+                self.dead = True
             self.animation_index = 0
         self.image = animation[int(self.animation_index)]
-    
+
     def reverse(self):
         self.speed *= -1
     

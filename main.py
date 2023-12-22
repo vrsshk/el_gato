@@ -10,8 +10,8 @@ class Game:
     def __init__(self):
         #game atributes
         self.ui = UI(window)
-        self.ful_health = 4
-        self.current_health = 4
+        self.ful_health = 90
+        self.current_health = 90
         self.coins = 0
 
         #create overworld
@@ -19,11 +19,17 @@ class Game:
         self.status = 'overworld'
     
     def create_level(self, current_level):
-        self.level = Level(current_level, window, self.create_overworld)
+        self.level = Level(current_level, window, self.create_overworld, self.change_coins, self.change_hb)
         self.status = 'level'
 
     def create_overworld(self):
         self.status = 'overworld'
+
+    def change_hb(self, damage):
+        self.current_health -= damage
+        
+    def change_coins(self):
+        self.coins += 1
 
     def run(self):
         if self.status == 'overworld':

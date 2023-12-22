@@ -6,36 +6,37 @@ from bats import Bat
 from data import window_height, window_width
 
 class Level:
-    def __init__(self, level_number, surface, create_overworld):
+    def __init__(self, level_number, surface, create_overworld, change_coins, change_hb):
+        #level setup
         self.surrounding = surrounding(str(level_number))
-
         self.scroll_vel = 0
         self.display_surface = surface
         self.setup_level()
         self.offset = 0
-        #
-        self.press_index = 0
-        self.press_speed = 0.1
 
+        #ui setup
+        self.change_coins = change_coins
+        self.change_hb = change_hb
+        
+        #overworld
         self.create_overworld = create_overworld
+        #timer
+        self.pressed = False
 
-    def handle_input(self):
-        self.press_index += self.press_speed
-        if self.press_index > 1:
-            self.press_index = 0
-
-        keys = pygame.key.get_pressed()
-        if self.press_index == 0:
-            if keys[pygame.K_ESCAPE]:
-                self.create_overworld()
-
-    def setup_level(self):
+        #player
         self.player = pygame.sprite.GroupSingle()
-        self.player.add(Player(32, 320))
+        self.player.add(Player(32, 320, self.change_hb))
 
+        #goal
         self.goal = pygame.sprite.GroupSingle()
         self.goal.add(Block(78*block_size, 13*block_size, block_size))
 
+    def handle_input(self):
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_ESCAPE]:
+            self.create_overworld()
+
+    def setup_level(self):
         self.blocks = self.create_layer('blocks')
         self.grass = self.create_layer('grass')
         self.coins = self.create_layer('coins')
@@ -126,6 +127,34 @@ class Level:
         if player.landed and player.direction.y < 0:
             player.landed = False
 
+    def bat_collision(self):
+        bat_collisions = pygame.sprite.spritecollide(self.player.sprite, self.bats, False)
+
+        if bat_collisions:
+            for bat in bat_collisions:
+                bat_center = bat.rect.centery
+                bat_top = bat.rect.top
+                player_bottom = self.player.sprite.rect.bottom
+                if (bat_top < player_bottom < bat_center) and self.player.sprite.direction.y >= 0:
+                    self.player.sprite.direction.y = -10
+                    bat.status = 'angry'
+                    if bat.dead: 
+                        bat.kill()
+                else:
+                    if bat.status == 'angry':
+                        self.player.sprite.get_damage(15)
+                    else:
+                        self.player.sprite.get_damage(5)
+
+
+
+    def coin_collision(self):
+        player = self.player.sprite
+        for coin in self.coins.sprites():
+            if coin.rect.colliderect(player.rect):
+                self.change_coins()
+                self.coins.remove(coin)
+
     def run(self):
         self.handle_input()
         self.scroll_x()
@@ -144,12 +173,14 @@ class Level:
 
         #for coins
         self.coins.update(self.scroll_vel)
+        self.coin_collision()
         self.coins.draw(self.display_surface)
 
         #for bats
         self.barrier.update(self.scroll_vel)
         self.bats_reverse()
         self.bats.update(self.scroll_vel)
+        self.bat_collision()
         self.bats.draw(self.display_surface)
 
         #for grass
