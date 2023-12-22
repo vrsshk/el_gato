@@ -3,20 +3,31 @@ from blocks import Block, AnimatedBlock, StaticBlock, block_size
 from player import Player
 from settings import surrounding, layer_images
 from bats import Bat
-
-window_width= 960
-window_height = 704
-
-
+from data import window_height, window_width
 
 class Level:
-    def __init__(self, level_number, surface):
+    def __init__(self, level_number, surface, create_overworld):
         self.surrounding = surrounding(str(level_number))
 
         self.scroll_vel = 0
         self.display_surface = surface
         self.setup_level()
         self.offset = 0
+        #
+        self.press_index = 0
+        self.press_speed = 0.1
+
+        self.create_overworld = create_overworld
+
+    def handle_input(self):
+        self.press_index += self.press_speed
+        if self.press_index > 1:
+            self.press_index = 0
+
+        keys = pygame.key.get_pressed()
+        if self.press_index == 0:
+            if keys[pygame.K_ESCAPE]:
+                self.create_overworld()
 
     def setup_level(self):
         self.player = pygame.sprite.GroupSingle()
@@ -116,6 +127,7 @@ class Level:
             player.landed = False
 
     def run(self):
+        self.handle_input()
         self.scroll_x()
 
         #for blocks
