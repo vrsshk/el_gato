@@ -86,7 +86,7 @@ class Player(pygame.sprite.Sprite):
             self.change_hb(damage)
             self.invincible = True
             self.hurt_time = pygame.time.get_ticks()
-
+    
     def invincibility_timer(self):
         if self.invincible:
             current_time = pygame.time.get_ticks() 

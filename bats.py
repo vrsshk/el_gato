@@ -23,9 +23,6 @@ class Bat(pygame.sprite.Sprite):
         #movement
         self.speed = randint(1, 2)
 
-    def get_status(self):
-        pass
-
     def animate(self): 
         if self.speed > 0:
             self.direction = "right"
