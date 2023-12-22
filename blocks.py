@@ -22,7 +22,7 @@ class StaticBlock(Block):
 class AnimatedBlock(Block):
     def __init__(self, x, y, size, file_name):
         super().__init__(x, y, size)
-        path =  join("pictures", "surrounding", file_name)
+        path =  join("assets", "surrounding", file_name)
         sprite_sheet = pygame.image.load(path).convert_alpha()
         self.sprites = sprite_separator(sprite_sheet, size, size)
         self.animation_index = 0

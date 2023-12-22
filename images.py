@@ -37,7 +37,7 @@ def load_sprite_sheets(dir, width, height, direction = False):
 
 
     Args:
-        dir (str): The name of the folder in the pictures directory.
+        dir (str): The name of the folder in the assets directory.
         window_width (int): The window_width of one sprite.
         height (int): The height of one sprite.
         direction (bool): Shows if the images have a direction
@@ -48,7 +48,7 @@ def load_sprite_sheets(dir, width, height, direction = False):
 
     Examples:
         Suppose there is a "sprites" folder with two images "1.png" and "2.png" 
-        in the "pictures" folder.
+        in the "assets" folder.
         "1.png" is 20x10 pixel image is made up of 2 sprites.
         "2.png" is 30x10 pixel image is made up of 3 sprites.
         The direction is irrelevant.
@@ -63,7 +63,7 @@ def load_sprite_sheets(dir, width, height, direction = False):
         all_sprites{}
 
     """
-    path = join("pictures", dir) #str with the path to the directory
+    path = join("assets", dir) #str with the path to the directory
     files = [f for f in listdir(path) if isfile(join(path, f))] #list of titles
 
     all_sprites = {}#dict compares spritesheet names to the sprite lists

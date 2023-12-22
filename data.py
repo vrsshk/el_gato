@@ -6,9 +6,9 @@ window_height = 704
 
 fps = 60
 
-icon_picture = pygame.image.load(join('pictures', 'surrounding', 'levels_icon.png')).convert_alpha()
+icon_picture = pygame.image.load(join('assets', 'surrounding', 'levels_icon.png')).convert_alpha()
 
-sprite_sheet = pygame.image.load(join('pictures', 'surrounding', 'levels.png')).convert_alpha()
+sprite_sheet = pygame.image.load(join('assets', 'surrounding', 'levels.png')).convert_alpha()
 level_pictures = sprite_separator(sprite_sheet, 222, 124)
 
 level_0 = {'node_pos': (300,200), 'node_picture': level_pictures[0]}

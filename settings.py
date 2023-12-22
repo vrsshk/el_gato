@@ -24,7 +24,7 @@ def surrounding(level_number):
 
 def layer_images(file_name):
 
-    path = join ("pictures", "surrounding", file_name)
+    path = join ("assets", "surrounding", file_name)
     big_image = pygame.image.load(path).convert_alpha()
     x_number = int(big_image.get_size()[0] / block_size)
     y_number = int(big_image.get_size()[1] / block_size)
