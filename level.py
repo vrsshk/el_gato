@@ -1,4 +1,5 @@
 import pygame
+import os
 from blocks import Block, AnimatedBlock, StaticBlock, block_size
 from player import Player
 from settings import surrounding, layer_images
@@ -20,16 +21,18 @@ class Level:
         
         #overworld
         self.create_overworld = create_overworld
+
+        self.defeat_bg = pygame.image.load(os.path.join("assets", "bg", "bg_defeat.png"))
+        self.victory_bg = pygame.image.load(os.path.join("assets", "bg", "bg_victory.png"))        
         #timer
-        self.pressed = False
+        self.exit = False
+        self.exit_delay = 4000
+        self.exit_time = 0
 
         #player
         self.player = pygame.sprite.GroupSingle()
         self.player.add(Player(32, 320, self.change_hb))
 
-        #goal
-        self.goal = pygame.sprite.GroupSingle()
-        self.goal.add(Block(78*block_size, 13*block_size, block_size))
 
     def handle_input(self):
         keys = pygame.key.get_pressed()
@@ -99,6 +102,12 @@ class Level:
         else:
             self.scroll_vel = 0
             player.x_vel = 5
+    
+    def check_fall(self):
+        player = self.player.sprite
+        player_y = player.rect.centery
+        if player_y > 1000:
+            self.player.sprite.get_damage(100)
 
     def horizontal_collision_movement(self):
         player = self.player.sprite
@@ -146,14 +155,23 @@ class Level:
                     else:
                         self.player.sprite.get_damage(5)
 
-
-
     def coin_collision(self):
         player = self.player.sprite
         for coin in self.coins.sprites():
             if coin.rect.colliderect(player.rect):
                 self.change_coins()
                 self.coins.remove(coin)
+                if len(self.coins.sprites()) == 0:
+                    self.exit = True
+                    self.exit_time = pygame.time.get_ticks()
+
+    def exit_timer(self):
+        if self.exit == True:
+            im = pygame.image.load(os.path.join("assets", "bg", "bg_victory.png"))
+            self.display_surface.blit(im,[0,0])
+            current_time = pygame.time.get_ticks()
+            if current_time - self.exit_time >= self.exit_delay:
+                self.create_overworld()
 
     def run(self):
         self.handle_input()
@@ -165,11 +183,9 @@ class Level:
 
         #for hero
         self.player.update()
-        self.goal.update(self.scroll_vel)
         self.horizontal_collision_movement()
         self.vertical_collision_movement()
         self.player.draw(self.display_surface)
-
 
         #for coins
         self.coins.update(self.scroll_vel)
@@ -180,12 +196,16 @@ class Level:
         self.barrier.update(self.scroll_vel)
         self.bats_reverse()
         self.bats.update(self.scroll_vel)
-        self.bat_collision()
         self.bats.draw(self.display_surface)
 
         #for grass
         self.grass.update(self.scroll_vel)
         self.grass.draw(self.display_surface)
+
+        #check damage
+        self.bat_collision()
+        self.check_fall()
+        self.exit_timer()
     
 
 
