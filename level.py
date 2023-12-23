@@ -7,13 +7,38 @@ from bats import Bat
 from data import window_height, window_width
 
 class Level:
+    """Класс Level используется для создания игрового уровня.
+    """
+
     def __init__(self, level_number, surface, create_overworld, change_coins, change_hb):
+        """Инициализация уровня.
+
+        Args:
+            level_number (int): Номер уровня.
+            surface (Surface): Область для изображения уровня, игровое окно.
+            create_overworld (method): Метод класса Game, возвращающий окно с выбором уровней.
+            change_coins (method): Метод класса Game, изменяющий количество монет.
+            change_hb (method): Метод класса Game, изменяющий количество здоровья.
+
+        Attributes:
+            surrounding (dict): Словарь, сопоставляющий названия объектов с таблицами их координат.
+            scroll_vel (int): Скорость перемещения "камеры".
+            display_surface (Surface): Область для изображения уровня, игровое окно.
+            change_coins (method): Метод, изменяющий количество монет.
+            change_hb (method): Метод, изменяющий количество здоровья.
+            create_overworld (method): Метод, возвращающий окно с выбором уровней.
+            defeat_bg (Surface): Изображение для игрового окна в случае поражения.
+            victory_bg (Surface): Изображение для игрового окна в случае победы.
+            exit (bool): Переменная, показывающая начат ли возврат в меню.
+            exit_delay (int): Длительность возврата в меню.
+            exit_time (int): Время начала возврата в меню.
+            player (GroupSingle): Группа, содержащая героя класса Player.
+        """
         #level setup
-        self.surrounding = surrounding(str(level_number))
+        self.surrounding = surrounding(level_number)
         self.scroll_vel = 0
         self.display_surface = surface
         self.setup_level()
-        self.offset = 0
 
         #ui setup
         self.change_coins = change_coins
@@ -33,48 +58,65 @@ class Level:
         self.player = pygame.sprite.GroupSingle()
         self.player.add(Player(32, 320, self.change_hb))
 
-
     def handle_input(self):
+        """Метод для выхода в меню с помощью клавиатуры.
+        """
         keys = pygame.key.get_pressed()
         if keys[pygame.K_ESCAPE]:
             self.create_overworld()
 
     def setup_level(self):
+        """Метод, задающий группы объектов для игрового уровня.
+        """
         self.blocks = self.create_layer('blocks')
         self.grass = self.create_layer('grass')
         self.coins = self.create_layer('coins')
         self.bats = self.create_layer('bats')
         self.barrier = self.create_layer('barrier')
 
-    def create_layer(self, type):
-        layer = self.surrounding[type]
+    def create_layer(self, object):
+        """Метод, собирающий объекты в группы в зависимости от их карт.
+
+        С помощью функции surrounding формируется "таблица" с координатами 
+        для нужноых объектов.
+        Пробегая по строкам таблицы, проверяется наличие объекта 
+        на текущей позиции. При наличии объекта, он добавляется в группу,
+        с учетом своего класса.
+
+        Args:
+            object (str): Название объекта (blocks, grass, etc.)
+
+        Returns:
+            Group: Группа объектов с необходимыми координатами.
+        """
+        layer = self.surrounding[object]
         sprite_group = pygame.sprite.Group()
         for i, row in enumerate(layer):
             for j, symbol in enumerate(row):
                 x = j * block_size
                 y = i * block_size
                 if symbol != "-1":
-                    if type == 'blocks':
+                    if object == 'blocks':
                         images = layer_images('blocks.png')
                         image = images[int(symbol)]
                         sprite = StaticBlock(x, y, block_size, image)
                         sprite_group.add(sprite)
-                    if type == 'grass':
+                    if object == 'grass':
                         images = layer_images('grass.png')
                         image = images[int(symbol)]
                         sprite = StaticBlock(x, y, block_size, image)
                         sprite_group.add(sprite)
-                    if type == 'coins':
+                    if object == 'coins':
                         x_1 = x + 8
                         y_1 = y + 8
                         sprite = AnimatedBlock(x_1, y_1, 16, 'coins.png')
                         sprite_group.add(sprite)
-                    if type == 'bats':
+                    if object == 'bats':
                         x_1 = x - 16
                         y_1 = y - 16
                         sprite = Bat(x_1, y_1)
                         sprite_group.add(sprite)
-                    if type == 'barrier':
+                    if object == 'barrier':
                         x_1 = x
                         y_1 = y
                         sprite = Block(x_1, y_1, block_size)
@@ -83,11 +125,17 @@ class Level:
         return sprite_group
     
     def bats_reverse(self):
+        """Метод, разворачивающий летучих мышей.
+        """
         for bat in self.bats.sprites():
             if pygame.sprite.spritecollide(bat, self.barrier, False):
                 bat.reverse()
 
     def scroll_x(self):
+        """Метод, задающий камеру.
+        
+        Нужен для сдвига объектов при подходе героя к краю игровой области.
+        """
         player = self.player.sprite
         player_x = player.rect.centerx
         direction_x = player.direction.x
@@ -104,12 +152,16 @@ class Level:
             player.x_vel = 5
     
     def check_fall(self):
+        """Метод для проверки героя на падение из игровой области.
+        """
         player = self.player.sprite
         player_y = player.rect.centery
         if player_y > 1000:
             self.player.sprite.get_damage(100)
 
     def horizontal_collision_movement(self):
+        """Метод для горизонатального взаимодействия героя с блоками.
+        """
         player = self.player.sprite
         player.rect.x += player.direction.x * player.x_vel
 
@@ -121,6 +173,8 @@ class Level:
                     player.rect.right = block.rect.left       
 
     def vertical_collision_movement(self):
+        """Метод для вертикального взаимодействия героя с блоками.
+        """
         player = self.player.sprite
         player.gravity_on()
 
@@ -137,6 +191,8 @@ class Level:
             player.landed = False
 
     def bat_collision(self):
+        """Метод для взаимодействия героя с летучими мышами.
+        """
         bat_collisions = pygame.sprite.spritecollide(self.player.sprite, self.bats, False)
 
         if bat_collisions:
@@ -156,6 +212,8 @@ class Level:
                         self.player.sprite.get_damage(5)
 
     def coin_collision(self):
+        """Метод для взаимодействия героя с монетками.
+        """
         player = self.player.sprite
         for coin in self.coins.sprites():
             if coin.rect.colliderect(player.rect):
@@ -166,6 +224,8 @@ class Level:
                     self.exit_time = pygame.time.get_ticks()
 
     def exit_timer(self):
+        """Счетчик периода выхода после начала возврата в меню.
+        """
         if self.exit == True:
             im = pygame.image.load(os.path.join("assets", "bg", "bg_victory.png"))
             self.display_surface.blit(im,[0,0])
@@ -174,6 +234,9 @@ class Level:
                 self.create_overworld()
 
     def run(self):
+        """Метод, вызывающий основные методы класса.
+        """
+
         self.handle_input()
         self.scroll_x()
 
