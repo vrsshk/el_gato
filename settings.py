@@ -38,6 +38,19 @@ def surrounding(level_number):
     return surrounding
 
 def layer_images(file_name):
+    """Разбивает изображение на отдельные области, возвращает их списком.
+
+    На вход подается название изображения из папки assets/surrounding.
+    Изображение нарезается сеткой с ячейками размера 32*32.
+    Формируется список новых изображений (Surface). Изображаения 
+    добавляются в порядке слева направо, сверух вниз.
+
+    Args:
+        file_name (str): Название необходимого изображения.
+
+    Returns:
+        list: Набор новых изображений.
+    """
 
     path = join ("assets", "surrounding", file_name)
     big_image = pygame.image.load(path).convert_alpha()
@@ -54,5 +67,3 @@ def layer_images(file_name):
             images.append(surface)
 
     return images
-
-print (type(surrounding(0)['barrier'][0][0]))
