@@ -1,10 +1,11 @@
 import pygame
 from os.path import join
 from images import sprite_separator
-window_width= 1120
-window_height = 704
 
 fps = 60
+window_width= 1120
+window_height = 704
+window = pygame.display.set_mode((window_width, window_height))
 
 icon_picture = pygame.image.load(join('assets', 'surrounding', 'levels_icon.png')).convert_alpha()
 
