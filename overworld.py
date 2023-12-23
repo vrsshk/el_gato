@@ -2,6 +2,7 @@ from typing import Any
 import pygame
 from data import levels, icon_picture
 
+
 #Код в этом файле частично заимствован код из видеоролика с канала Clear Code
 #https://youtu.be/IUe2pdTWroc?si=hnEfNgZaZEhbbKQm
 
