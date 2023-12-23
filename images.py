@@ -1,16 +1,21 @@
 import pygame
-import os
 from os import listdir
 from os.path import isfile, join
 
-window_width = 960
-HEIGHT = 720
-FPS = 60
+window_width= 1120
+window_height = 704
+window = pygame.display.set_mode((window_width, window_height))
 
-window = pygame.display.set_mode((window_width, HEIGHT))
 
-#this func gets list of sprites and returns list of flipped(x-axis) sprites
 def flip (images):
+    """Отзеркаливает спрайты из списка по оси х.
+
+    Args:
+        images (list): Набор изображений (Surface).
+
+    Returns:
+        list: Набор отзеркаленных изображений (Surface).
+    """
     flipped_sprites = []
     for image in images:
         flipped_sprites.append(pygame.transform.flip(image, True, False))
@@ -18,6 +23,19 @@ def flip (images):
 
 
 def sprite_separator(sprite_sheet, width, height):
+    """Нарезка большого изображения на спрайты.
+
+    Спрайты должны расставлены в большом изображении горизонтально, 
+    т.к. нарезка просиходит проходом по ширине изображения. 
+
+    Args:
+        sprite_sheet (Surface): Изображение с несколькими спрайтами.
+        width (int): Ширина одного спрайта.
+        height (int): Высота одного спрайта.
+
+    Returns:
+        list: Набор спрайтов.
+    """
     sprites = [] #list of the sprites
     for i in range(sprite_sheet.get_width() // width):
         surface = pygame.Surface((width, height), pygame.SRCALPHA)
@@ -28,42 +46,43 @@ def sprite_separator(sprite_sheet, width, height):
 
 
 def load_sprite_sheets(dir, width, height, direction = False):
-    """Summary line.
+    """Загрузка изображений для анимации.
 
-    The function loads images with several sprites from the directory.  
-    Each image is divided into separate sprites, which are collected in lists. 
-    Additional sprite lists are created for sprites with a direction. 
-    After that, the lists are collected into a dictionary by their name.
+    Функция загружает изображения с несколькими спрайтами из указанной 
+    папки (dir).  Каждое изображение разделяется на отдельные спрайты с помощью 
+    функции sprite_separator, которые далее собираются в наборы (list).
+    Полученные наборы собираются в словарь по их имени.
+    Для изображений, в которых нужно учитывать направление создается 2 набора
+    для каждого направления.
 
 
     Args:
-        dir (str): The name of the folder in the pictures directory.
-        window_width (int): The window_width of one sprite.
-        height (int): The height of one sprite.
-        direction (bool): Shows if the images have a direction
+        dir (str): Название необходимой директории в папке assets.
+        width (int): Ширина одного спрайта.
+        height (int): Высота одного спрайта.
+        direction (bool): Показывает имеет ли изображение направление.
 
     Returns:
-        dict: The dictionary provides a list of proper sprites by their name.
+        dict: Словарь, сопоставляет названия(str) с наборами спрайтов (list of surfaces).
 
 
     Examples:
-        Suppose there is a "sprites" folder with two images "1.png" and "2.png" 
-        in the "pictures" folder.
-        "1.png" is 20x10 pixel image is made up of 2 sprites.
-        "2.png" is 30x10 pixel image is made up of 3 sprites.
-        The direction is irrelevant.
-        Then the output will be the dictionary all_sprites{}
-        all_sprites["1"] will return a list with two 10X10 sprites,
-        all_sprites["3"] will return a list with two 10X10 sprites.
+        Пусть в папке assets/sprites находятся 2 изображения "1.png" и "2.png".
+        Изображение "1.png" размера 20x10 пикселя состоит из 2 спрайтов.
+        Изображение "2.png" размера 30x10 пикселя состоит из 3 спрайтов.
+        Направление не учитывается. Вызовем функцию с подходящими параметрами.
+        all_sprites = load_sprite_sheets("sprites", 10, 10, False)
+        Словарь all_sprites будет содержать 2 списка изображений.
+        all_sprites["1"] возвращает список с двумя спрайтами 10Х10,
+        all_sprites["3"]  возвращает список с тремя спрайтами 10Х10.
 
         >>> dir = "sprites"
         >>> window_width = 10
         >>> height = 10
         >>> direction = False
         all_sprites{}
-
     """
-    path = join("pictures", dir) #str with the path to the directory
+    path = join("assets", dir) #str with the path to the directory
     files = [f for f in listdir(path) if isfile(join(path, f))] #list of titles
 
     all_sprites = {}#dict compares spritesheet names to the sprite lists
