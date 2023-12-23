@@ -6,7 +6,22 @@ from csv import reader
 from blocks import block_size
 
 def surrounding(level_number):
-    path = join("map",level_number)
+    """Функция, преобразующая csv файлы для необходимого игрового уровня.
+
+    В зависимости от номера уровня открывается необходимая папка с csv файлами
+    (картами). Каждая карта преобразуется в набор (list) построчных наборов
+    (list) координат (str). Т.е. каждая карта представляет "таблицу" с координатами
+    нужных объектов. Все преобразованные карты собираются в словарь, 
+    который сопоставляет их с названиями файлов (названия объектов сопоставлены
+    таблицам с их координатами).
+
+    Args:
+        level_number (int): Номер уровня.
+
+    Returns:
+        dict: Сопоставляет названия csv файлов с их содержанием. 
+    """
+    path = join("map",str(level_number))
     files = []
     for f in listdir(path):
         files.append(join(path, f))
@@ -39,3 +54,5 @@ def layer_images(file_name):
             images.append(surface)
 
     return images
+
+print (type(surrounding(0)['barrier'][0][0]))
