@@ -17,7 +17,7 @@ class Player(pygame.sprite.Sprite):
     """    
     
     def __init__(self, x, y, change_hb):
-        """_summary_
+        """Инициализация героя.
 
         Args:
             x (int): Расположение героя по оси x.
@@ -29,7 +29,7 @@ class Player(pygame.sprite.Sprite):
             rect (Rect): Объект для хранения прямоугольных координат героя.
             direction (Vector2): Двумерный вектор, показывающий направление движения героя.
             direction_name (str): Название направления героя по оси x.
-            change_hb (func): Функция, изменяющая количество здоровья.
+            change_hb (method): Метод класса Game, изменяющий количество здоровья.
             invincible (bool): Переменная, показывающающая неуязвим ли герой.
             invincibility_delay (int): Длительность периода неуязвимости героя.
             hurt_time (int): Время, в которе герой получил урон.
