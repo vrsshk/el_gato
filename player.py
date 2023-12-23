@@ -7,13 +7,6 @@ class Player(pygame.sprite.Sprite):
 
     Player получен наследованием класса pygame.sprite.Sprite,
     базового класс для создания видимых игровых объектов.
-
-
-    Attributes:
-
-        x (int): Расположение героя по оси x.
-        y (int): Расположение героя по оси y.
-        change_nb (func): Функция, изменяющая количество здоровья.
     """    
     
     def __init__(self, x, y, change_hb):
