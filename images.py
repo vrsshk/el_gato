@@ -21,6 +21,7 @@ def flip (images):
         flipped_sprites.append(pygame.transform.flip(image, True, False))
     return flipped_sprites
 
+#Следующие функции заимствованы из видеоролика с канала freeCodeCamp.org
 
 def sprite_separator(sprite_sheet, width, height):
     """Нарезка большого изображения на спрайты.
